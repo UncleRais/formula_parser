@@ -32,8 +32,8 @@ int main(int argc, char** argv) {
 int main(int argc, char** argv) {
 	std::array in{ 1, 2, 3 };
 	variable<0> x;
-  variable<1> y;
-  variable<2> z;
+  	variable<1> y;
+  	variable<2> z;
 	const auto vector_norm = x * x + y * y + z * z;
 	std::cout << vector_norm(in) << std::endl;
 }
