@@ -8,6 +8,7 @@ Contains implementations of:
 
 We formulate simple grammatics for domain specific language (DSL)
 * expression := constant | variable | expression +*/- expression | FUNCTION(expression) | (expression) | -expression
+  
 Grammatic is used to implement expression class.
 
 # How to use
@@ -43,6 +44,7 @@ int main(int argc, char** argv) {
 Special input format is required 
 * pre_infix_notation -> |variables : expression|. Example: |x y z t : x * y * z - t / x + sin(x * y * z)|.
 * infix notation (standart) -> x + 5 * (y - z / t), polish notation (prefix) -> x 5 y z t / - * +
+  
 We convert pre_infix_notation to polish_notation in order to further substituting variables into corresponding formula and its evaluation.
 
 # How to use
