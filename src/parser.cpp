@@ -4,7 +4,7 @@ namespace {
 using namespace std::string_literals;
 const std::unordered_map<std::string, std::size_t> _operator_priority{ {"("s, 0}, {"+"s, 1}, {"-"s, 1}, {"*"s, 2},
 																	   {"/"s, 2}, {"^"s, 3}, {"~"s, 4}, {"sin"s, 4}, 
-																	   {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
+				                                                       {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
 																	   {"abs"s, 4}, {"sign"s, 4}, {"sqr"s, 4}, {"sqrt"s, 4},
 																	   {"log"s, 4} };
 }; 
@@ -145,10 +145,10 @@ T MathParser<T>::calc_polish_notation(const std::vector<T>& input_vars) {
 //template <typename T>
 //auto execute(std::stack<std::string>& num_and_var, std::map<std::string, std::size_t>& vars, std::string& op) {
 //	const std::map<std::string, std::size_t> ops = { {'+'}, 0}, {'-'}, 1}, {'*'}, 2},
-//										   {'/'}, 3}, {'^'}, 4}, {'~'}, 5}, {"sin"}, 6},
-//										   {"cos"}, 7}, {"tan"}, 8}, {"atan"}, 9}, {"exp"}, 10},
-//										   {"abs"}, 11}, {"sign"}, 12}, {"sqr"}, 13}, {"sqrt"}, 14},
-//										   {"log"}, 15} };
+//													 {'/'}, 3}, {'^'}, 4}, {'~'}, 5}, {"sin"}, 6},
+// 													 {"cos"}, 7}, {"tan"}, 8}, {"atan"}, 9}, {"exp"}, 10},
+// 													 {"abs"}, 11}, {"sign"}, 12}, {"sqr"}, 13}, {"sqrt"}, 14},
+//												     {"log"}, 15} };
 //
 //	auto get_expr = [&](const std::string& s){
 //		if (vars.find(s) != vars.end()) {
