@@ -1,5 +1,4 @@
-#ifndef PARSER_H
-#define PARSER_H
+#pragma once
 
 #include <map>
 #include <set>
@@ -14,11 +13,11 @@
 template <arithmetic T = double>
 class MathParser {
 public:
-    explicit MathParser(const str& pre_infix_notation);
+    explicit MathParser(const std::string& pre_infix_notation);
 
-    str get_polish_notation() const;
-    size_type get_n_vars() const;
-    std::map<str, std::pair<size_type, T>> get_vars() const;
+    std::string get_polish_notation() const;
+    std::size_t get_n_vars() const;
+    std::map<std::string, std::pair<std::size_t, T>> get_vars() const;
 
     T calc_polish_notation(const std::vector<T>& input_vars);
 
@@ -40,27 +39,20 @@ public:
 
 private:
     void set_variables(const std::vector<T>& input_vars);
-    std::map<str, std::pair<size_type, T>> get_variables(str& pre_variables) const;
+    std::map<std::string, std::pair<std::size_t, T>> get_variables(std::string& pre_variables) const;
     void parentheses_check() const;
     void dots_check() const;
 
-    void find_vars_and_ops(const str& notation);
+    void find_vars_and_ops(const std::string& notation);
     void assemble_polish_notation();
 
-    str _pre_infix_notation;
-    size_type _n_vars = 0;
-    str _infix_notation;
-    std::vector<str> _polish_notation{};
-    std::map<str, std::pair<size_type, T>> _vars;
-    std::vector<std::pair<size_type, str>> _var_op_indices;
-    const std::map<str, size_type> _operator_priority{ {str{'('}, 0}, {str{'+'}, 1}, {str{'-'}, 1}, {str{'*'}, 2},
-                                                       {str{'/'}, 2}, {str{'^'}, 3}, {str{'~'}, 4}, {str{"sin"}, 4}, 
-                                                       {str{"cos"}, 4}, {str{"tan"}, 4}, {str{"atan"}, 4}, {str{"exp"}, 4},
-                                                       {str{"abs"}, 4}, {str{"sign"}, 4}, {str{"sqr"}, 4}, {str{"sqrt"}, 4},
-                                                       {str{"log"}, 4} };
-    const std::set<symbol> _one_sym_operator = {'(', ')', '+', '-', '*', '/', '~', '^'};
+    std::string _pre_infix_notation;
+    std::size_t _n_vars = 0;
+    std::string _infix_notation;
+    std::vector<std::string> _polish_notation{};
+    std::map<std::string, std::pair<std::size_t, T>> _vars;
+    std::vector<std::pair<std::size_t, std::string>> _var_op_indices;
+    const std::set<char> _one_sym_operator = {'(', ')', '+', '-', '*', '/', '~', '^'};
 };
 
 template class MathParser<double>;
-
-#endif

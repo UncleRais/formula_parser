@@ -1,5 +1,4 @@
-#ifndef UTILS_H
-#define UTILS_H
+#pragma once
 
 #define _USE_MATH_DEFINES
 #include <iostream>
@@ -14,25 +13,18 @@
 #include <typeindex>
 #include <type_traits>
 
-using str = std::string;
-using symbol = char;
-using num_type = double;
-using size_type = std::size_t;
-
 template <typename T> 
 concept arithmetic = std::integral<T> || std::floating_point<T>;
 
-void error(const str& str);
+void error(const std::string& str);
 
-str& delete_all(str& str, symbol symb);
-size_type count_all(const str& str, symbol symb);
+std::string& delete_all(std::string& str, char symb);
+std::size_t count_all(const std::string& str, char symb);
 
-bool is_latin_symbol(symbol s);
-bool is_latin_str(str s);
-bool is_digit(symbol s);
-bool is_number(str s);
+bool is_latin_symbol(char s);
+bool is_latin_str(std::string s);
+bool is_digit(char s);
+bool is_number(std::string s);
 
 template<typename T>
-T get_number(const str& number);
-
-#endif
+T get_number(const std::string& number);

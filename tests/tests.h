@@ -1,21 +1,20 @@
-#ifndef TESTS_H
-#define TESTS_H
+#pragma once
 #include "parser.h"
 #include <cassert>
 
-template <typename T, size_type TupSize, size_type M>
+template <typename T, std::size_t TupSize, std::size_t M>
 void check_elem(const T& x, size_t id, const std::array<double, M>& input, const std::array<double, TupSize>& ref) {
 	const auto res = x(input);
 	assert(std::abs(res - ref[id]) < 1e-15);
 	//std::cout << res << " ";
 };
 
-template <typename TupleT, size_type... Is, size_type TupSize = std::tuple_size_v<TupleT>, size_type M>
+template <typename TupleT, std::size_t... Is, std::size_t TupSize = std::tuple_size_v<TupleT>, std::size_t M>
 void tuple_check(const TupleT& tp, std::index_sequence<Is...>, const std::array<double, M>& input, const std::array<double, TupSize>& ref) {
 	(check_elem(std::get<Is>(tp), Is, input, ref), ...);
 }
 
-template <typename TupleT, size_type TupSize = std::tuple_size_v<TupleT>, size_type M>
+template <typename TupleT, std::size_t TupSize = std::tuple_size_v<TupleT>, std::size_t M>
 void check_result(const TupleT& tp, const std::array<double, M>& input, const std::array<double, TupSize>& ref) {
 	tuple_check(tp, std::make_index_sequence<TupSize>{}, input, ref);
 }
@@ -116,5 +115,3 @@ void test_polish_notation() {
 	assert(test.get_n_vars() == 3);
 	assert(std::abs(test({ 2., M_PI, 10. }) - 9.99991) < 1e-5);
 }
-
-#endif
