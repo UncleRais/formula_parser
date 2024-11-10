@@ -50,7 +50,7 @@ Special input format is required
 We convert pre_infix_notation to polish_notation in order to further substituting variables into corresponding formula and its evaluation.
 
 # How to use
-## Example №1 (from unit tests)
+## Example №1
 ```c++
 #include "parser.h"
 
