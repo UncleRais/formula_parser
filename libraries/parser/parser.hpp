@@ -1,4 +1,5 @@
-#include "parser.hpp"
+#pragma once
+#include "parser_fwd.hpp"
 
 #include <unordered_map>
 #include <stack>
@@ -27,13 +28,7 @@ MathParser<T>::MathParser(const std::string& pre_infix_notation) : _pre_infix_no
 	parentheses_check();
 	dots_check();
 
-	std::cout << _infix_notation << std::endl;
-
 	find_vars_and_ops(_infix_notation);
-
-	for (auto [i, s] : _var_op_indices) {
-		std::cout << i << " = " << s << std::endl;
-	}
 
 	assemble_polish_notation();
 }
@@ -154,125 +149,10 @@ T MathParser<T>::calc_polish_notation(const std::vector<T>& input_vars) {
 	return num_and_var.top();
 }
 
-//template <typename T>
-//auto execute(std::stack<std::string>& num_and_var, std::map<std::string, std::size_t>& vars, std::string& op) {
-//	const std::map<std::string, std::size_t> ops = { {'+'}, 0}, {'-'}, 1}, {'*'}, 2},
-//													 {'/'}, 3}, {'^'}, 4}, {'~'}, 5}, {"sin"}, 6},
-// 													 {"cos"}, 7}, {"tan"}, 8}, {"atan"}, 9}, {"exp"}, 10},
-// 													 {"abs"}, 11}, {"sign"}, 12}, {"sqr"}, 13}, {"sqrt"}, 14},
-//												     {"log"}, 15} };
-//
-//	auto get_expr = [&](const std::string& s){
-//		if (vars.find(s) != vars.end()) {
-//			return variable<vars[s]>();
-//		}
-//		else {
-//			is_scalar<T>(get_number<T>(s));
-//		}
-//	};
-//
-//	const std::string right = num_and_var.empty() ? 0 : num_and_var.top();
-//	num_and_var.pop();
-//	std::string left = 0;
-//	switch (ops.at(op))
-//	{
-//	case 0:
-//		left = num_and_var.empty() ? 0 : num_and_var.top();
-//		num_and_var.pop();
-//		return (get_expr(left) + get_expr(right)).self();
-//		break;
-//	case 1:
-//		left = num_and_var.empty() ? 0 : num_and_var.top();
-//		num_and_var.pop();
-//		return (get_expr(left) - get_expr(right)).self();
-//		break;
-//	case 2:
-//		left = num_and_var.empty() ? 0 : num_and_var.top();
-//		num_and_var.pop();
-//		return (get_expr(left) * get_expr(right)).self();
-//		break;
-//	case 3:
-//		left = num_and_var.empty() ? 0 : num_and_var.top();
-//		num_and_var.pop();
-//		return (get_expr(left) / get_expr(right)).self();
-//		break;
-//	case 4:
-//		left = num_and_var.empty() ? 0 : num_and_var.top();
-//		num_and_var.pop();
-//		return (pow(get_expr(left), get_expr(right))).self();
-//		break;
-//	case 5:
-//		return -get_expr(left).self();
-//		break;
-//	case 6:
-//		return sin(get_expr(right)).self();
-//		break;
-//	case 7:
-//		return cos(get_expr(right)).self();
-//		break;
-//	case 8:
-//		return tan(get_expr(right)).self();
-//		break;
-//	case 9:
-//		return ctan(get_expr(right)).self();
-//		break;
-//	case 10:
-//		return exp(get_expr(right)).self();
-//		break;
-//	case 11:
-//		return abs(get_expr(right)).self();
-//		break;
-//	case 12:
-//		return sign(get_expr(right)).self();
-//		break;
-//	case 13:
-//		return sqr(get_expr(right)).self();
-//		break;
-//	case 14:
-//		return sqrt(get_expr(right)).self();
-//		break;
-//	case 15:
-//		return log(get_expr(right)).self();
-//		break;
-//	default:
-//		error("Error. Undefined operator <" + op + ">/.");
-//		break;
-//	}
-//}
-
-//template <typename T>
-//auto MathParser<T>::assemble_expression() {
-//	std::map<std::string, std::size_t> vars;
-//	for (auto& [var, p] : _vars) 
-//		vars[var] = p.first;
-//
-//	auto res = int_constant<0>();
-//	std::stack<std::string> num_and_var;
-//	for (std::size_t i = 0; i < _polish_notation.size(); i++) {
-//		std::string smth = _polish_notation[i];
-//		if (is_number(smth) || _vars.find(smth) != _vars.end()) {
-//			num_and_var.push(smth);
-//		}
-//		else if (_operator_priority.count(smth) > 0) {
-//			res += execute<T>(num_and_var, vars, smth);
-//		}
-//	}
-//	return res;
-//};
-
 template <arithmetic T>
 T MathParser<T>::operator()(const std::vector<T>& input_vars) {
 	return calc_polish_notation(input_vars);
 }
-
-// template<arithmetic T>
-// template<arithmetic... Vars>
-// T MathParser<T>::operator()(Vars... vars) {
-// 	std::vector<T> input{ vars... };
-// 	if (input.size() != _n_vars)
-// 		error("Wrong number of input variables.");
-// 	return calc_polish_notation(input);
-// }
 
 template <arithmetic T>
 void MathParser<T>::set_variables(const std::vector<T>& input_vars) {
@@ -285,7 +165,7 @@ void MathParser<T>::set_variables(const std::vector<T>& input_vars) {
 void variables_format_check(const std::vector<std::string> variables) {
 	for (const std::string& var : variables) {
 		const char& first_variable_symbol = var[0];
-		if (!is_latin_symbol(first_variable_symbol))
+		if (!std::isalpha(first_variable_symbol))
 			error("Wrong variables format <" + var + ">. Variables must start with latin letter, variable cannot start with a number.");
 	}
 }
@@ -323,7 +203,7 @@ void MathParser<T>::dots_check() const {
 	if (_infix_notation[0] == s || _infix_notation[_infix_notation.size() - 1] == s)
 		error("Wrong expression format. The expression can not be started or finished with dot. Dots are only allowed in number representation.");
 	for (std::size_t position = _infix_notation.find(s); position != -1; position = _infix_notation.find(s, position + 1)) {
-		if (!is_digit(_infix_notation[position + 1]))
+		if (!std::isdigit(_infix_notation[position + 1]))
 			error("Wrong expression format. The expression contains invalid dots. Dots are only allowed in number representation");
 	}
 }
@@ -367,12 +247,6 @@ void MathParser<T>::assemble_polish_notation() {
 	std::size_t count = 0;
 	for (std::size_t i = 0; i < _infix_notation.size(); i++) {
 		const char& s = _infix_notation[i];
-		std::cout << s << std::endl;
-		for (auto& [ss, pr] : _operator_priority) {
-			std::cout << ss << " : " << pr << std::endl;
-		}
-		std::cout << int(_one_sym_operator.find(s) != _one_sym_operator.end()) << std::endl;
-		std::cout << int(_operator_priority.count(std::string{s}) > 0) << std::endl;
 		if (_var_op_indices[count].first == i) {
 			const auto& [ind, smth] = _var_op_indices[count];
 			if (_operator_priority.find(smth) != _operator_priority.end()) {
@@ -391,8 +265,8 @@ void MathParser<T>::assemble_polish_notation() {
 			i += smth.size() - 1;
 			count++;
 			if (count >= _var_op_indices.size()) count = 0;
-		} else if (is_digit(s) || s == '.') {
-			if (i == 0 || (!is_digit(_infix_notation[i - 1]) && _infix_notation[i - 1] != '.' && i > 0)) {
+		} else if (std::isdigit(s) || s == '.') {
+			if (i == 0 || (!std::isdigit(_infix_notation[i - 1]) && _infix_notation[i - 1] != '.' && i > 0)) {
 				_polish_notation.push_back(std::string{ s });
 			}
 			else {
@@ -411,7 +285,6 @@ void MathParser<T>::assemble_polish_notation() {
 		}
 		else if (_one_sym_operator.find(s) != _one_sym_operator.end() && _operator_priority.count(std::string{s}) > 0) {
 			std::string op = std::string{ s };
-			std::cout << op << std::endl;
 			// for unary minus
 			if (op == std::string{ '-' } && (i == 0 || (i > 1 && _operator_priority.count(std::string{ _infix_notation[i - 1] }) > 0)))
 				op = std::string{ '~' };

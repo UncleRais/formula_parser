@@ -1,5 +1,6 @@
 #pragma once
-#include "utils.h"
+#include "utils.hpp"
+namespace ex {
 // Grammatics for Domain specific language (DSL)
 // expression := constant | variable | expression +*/- expression | FUNCTION(expression) | (expression) | -expression 
 template<class E>
@@ -341,6 +342,8 @@ struct pow_expression : expression<pow_expression<E1, E2> > {
 template<class E1, class E2>
 pow_expression<E1, E2> pow(const expression<E1>& e1, const expression<E2>& e2) {
 	return pow_expression<E1, E2>(e1, e2);
+}
+
 }
 // -----------------------------------------------------------
 

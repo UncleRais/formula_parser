@@ -2,14 +2,12 @@
 
 #include <map>
 #include <set>
-#include <stack>
 
-#include "utils.h"
-#include "expression.h"
+#include "utils.hpp"
+#include "expression.hpp"
 
 // pre_infix_notation -> |variables : expression|. Example: |x y z t : x * y * z - t / x + sin(x * y * z)|.
 // infix notation (standart) -> x + 5 * (y - z / t), polish notation (prefix) -> x 5 y z t / - * +
-
 template <arithmetic T = double>
 class MathParser {
 public:
@@ -24,9 +22,7 @@ public:
     auto assemble_expression();
 
     T operator()(const std::vector<T>& input_vars);
-    // template<arithmetic... Vars>
-    // T operator()(Vars... vars);
-
+    
     MathParser& operator =(const MathParser<T> from) {
         _pre_infix_notation = from._pre_infix_notation;
         _n_vars = from._n_vars;
