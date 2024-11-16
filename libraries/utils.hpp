@@ -14,20 +14,20 @@
 
 #include <iostream>
 
+namespace parser::utils {
+
 template <typename T> 
 concept arithmetic = std::integral<T> || std::floating_point<T>;
-
-namespace parser::utils {
 
 void error(const std::string& str);
 
 std::string& delete_all(std::string& str, char symb);
 std::size_t count_all(const std::string& s, char symb);
 
-bool is_latin_str(std::string s);
-bool is_number(std::string s);
+bool is_latin_str(const std::string& s);
+bool is_number(const std::string& s);
 
-template<typename T>
+template<arithmetic T>
 T get_number(const std::string& number) {
 	if constexpr (std::is_same_v<T, float>)       return std::stof(number);
 	if constexpr (std::is_same_v<T, double>)      return std::stod(number);
