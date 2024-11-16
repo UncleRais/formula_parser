@@ -6,17 +6,25 @@ namespace parser {
 
 namespace {
     using namespace std::string_literals;
+    std::unordered_map<std::string, std::size_t> operator_priority{};
+    std::unordered_set<char> one_sym_operators{};
 
-    std::unordered_map<std::string, std::size_t> get_operator_priority() {
-        return std::move(std::unordered_map<std::string, std::size_t>{{"("s, 0}, {"+"s, 1}, {"-"s, 1}, {"*"s, 2},
-                                                                      {"/"s, 2}, {"^"s, 3}, {"~"s, 4}, {"sin"s, 4}, 
-                                                                      {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
-                                                                      {"abs"s, 4}, {"sign"s, 4}, {"sqr"s, 4}, {"sqrt"s, 4},
-                                                                      {"log"s, 4} });
+    const std::unordered_map<std::string, std::size_t>& get_operator_priority() {
+        if (operator_priority.size() == 0) {
+            operator_priority = std::unordered_map<std::string, std::size_t>{{"("s, 0}, {"+"s, 1}, {"-"s, 1}, {"*"s, 2},
+                                                                             {"/"s, 2}, {"^"s, 3}, {"~"s, 4}, {"sin"s, 4}, 
+                                                                             {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
+                                                                             {"abs"s, 4}, {"sign"s, 4}, {"sqr"s, 4}, {"sqrt"s, 4},
+                                                                             {"log"s, 4} };
+        }
+        return operator_priority;
     }
 
-    std::unordered_set<char> get_one_sym_operators() {
-        return std::move(std::unordered_set<char>{'(', ')', '+', '-', '*', '/', '~', '^'});
+    const std::unordered_set<char>& get_one_sym_operators() {
+        if (one_sym_operators.size() == 0) {
+            one_sym_operators = std::unordered_set<char>{'(', ')', '+', '-', '*', '/', '~', '^'};
+        }
+        return one_sym_operators;
     }
     
     void parentheses_check(const std::string& infix_notation) {
@@ -94,8 +102,8 @@ std::unordered_map<std::string, std::size_t> MathParser::get_variables(std::stri
 }
 
 std::vector<std::pair<std::size_t, std::string>> MathParser::find_vars_and_ops(const std::string& infix_notation) const {
-    const auto operator_priority = get_operator_priority();
-    const auto one_sym_operator = get_one_sym_operators();
+    const auto& operator_priority = get_operator_priority();
+    const auto& one_sym_operator = get_one_sym_operators();
     std::vector<std::pair<std::size_t, std::string>> var_op_indices;
 
     auto actually_var = [&](std::size_t pos, const std::string& s) {
@@ -131,8 +139,8 @@ std::vector<std::pair<std::size_t, std::string>> MathParser::find_vars_and_ops(c
 }
 
 void MathParser::assemble_polish_notation(const std::string& infix_notation, const std::vector<std::pair<std::size_t, std::string>>& var_op_indices) {
-    const auto operator_priority = get_operator_priority();
-    const auto one_sym_operator = get_one_sym_operators();
+    const auto& operator_priority = get_operator_priority();
+    const auto& one_sym_operator = get_one_sym_operators();
     std::stack<std::string> operators;
     std::size_t count = 0;
     for (std::size_t i = 0; i < infix_notation.size(); i++) {

@@ -12,12 +12,17 @@ namespace parser {
 
 namespace {
     using namespace std::string_literals;
-    std::unordered_map<std::string, std::size_t> get_arithmetic_operators() {
-        return std::move(std::unordered_map<std::string, std::size_t>{  {"+"s, 0}, {"-"s, 1}, {"*"s, 2},
-                                                                        {"/"s, 3}, {"^"s, 4}, {"~"s, 5}, {"sin"s, 6},
-                                                                        {"cos"s, 7}, {"tan"s, 8}, {"atan"s, 9}, {"exp"s, 10},
-                                                                        {"abs"s, 11}, {"sign"s, 12}, {"sqr"s, 13}, {"sqrt"s, 14},
-                                                                        {"log"s, 15} });
+    std::unordered_map<std::string, std::size_t> arithmetic_operators{};
+
+    const std::unordered_map<std::string, std::size_t>& get_arithmetic_operators() {
+        if (arithmetic_operators.size() == 0) {
+            arithmetic_operators = std::unordered_map<std::string, std::size_t>{{"+"s, 0}, {"-"s, 1}, {"*"s, 2},
+                                                                                {"/"s, 3}, {"^"s, 4}, {"~"s, 5}, {"sin"s, 6},
+                                                                                {"cos"s, 7}, {"tan"s, 8}, {"atan"s, 9}, {"exp"s, 10},
+                                                                                {"abs"s, 11}, {"sign"s, 12}, {"sqr"s, 13}, {"sqrt"s, 14},
+                                                                                {"log"s, 15} };
+        }
+        return arithmetic_operators;
     }
 
 }
@@ -38,22 +43,21 @@ public:
     template <utils::arithmetic T>
     T operator()(const std::vector<T>& input_vars) const {
         if (input_vars.size() != _vars.size())
-            utils::error("Wrong number of variables");
+            utils::error("Wrong number of variables.");
         return calc_polish_notation(input_vars);
     }
 
     template <utils::arithmetic T>
     T operator()(const std::initializer_list<T>& input_vars) const {
         if (input_vars.size() != _vars.size())
-            utils::error("Wrong number of variables");
+            utils::error("Wrong number of variables.");
         std::vector<T> input(input_vars);
         return calc_polish_notation(input);
     }
 
 private:
     template<utils::arithmetic T>
-    T execute(std::stack<T>& num_and_var, std::string& op) const {
-        const auto ops = get_arithmetic_operators();
+    T execute(const std::unordered_map<std::string, std::size_t>& ops, std::stack<T>& num_and_var, const std::string& op) const {
         const T right = num_and_var.empty() ? 0 : num_and_var.top();
         num_and_var.pop();
         T left = 0;
@@ -127,20 +131,19 @@ private:
 
     template <utils::arithmetic T>
     T calc_polish_notation(const std::vector<T>& input_vars) const {
-        const auto arithmetic_operators = get_arithmetic_operators();
         if (input_vars.size() != _vars.size())
-            utils::error("Wrong number of input variables");
+            utils::error("Wrong number of variables.");
+        const auto& arithmetic_operators = get_arithmetic_operators();
         std::stack<T> num_and_var;
-        for (std::size_t i = 0; i < _polish_notation.size(); i++) {
-            std::string smth = _polish_notation[i];
+        for (const std::string& smth : _polish_notation) {
             if (utils::is_number(smth)) {
                 num_and_var.push(utils::get_number<T>(smth));
             }
-            else if (_vars.find(smth) != _vars.end()) {
+            else if (_vars.count(smth) > 0) {
                 num_and_var.push(input_vars[_vars.at(smth)]);
             }
             else if (arithmetic_operators.count(smth) > 0) {
-                num_and_var.push(execute(num_and_var, smth));
+                num_and_var.push(execute(arithmetic_operators, num_and_var, smth));
             }
         }
         return num_and_var.top();
