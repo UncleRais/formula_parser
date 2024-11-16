@@ -12,16 +12,13 @@ namespace parser {
 
 namespace {
     using namespace std::string_literals;
-    std::unordered_map<std::string, std::size_t> arithmetic_operators{};
 
     const std::unordered_map<std::string, std::size_t>& get_arithmetic_operators() {
-        if (arithmetic_operators.size() == 0) {
-            arithmetic_operators = std::unordered_map<std::string, std::size_t>{{"+"s, 0}, {"-"s, 1}, {"*"s, 2},
-                                                                                {"/"s, 3}, {"^"s, 4}, {"~"s, 5}, {"sin"s, 6},
-                                                                                {"cos"s, 7}, {"tan"s, 8}, {"atan"s, 9}, {"exp"s, 10},
-                                                                                {"abs"s, 11}, {"sign"s, 12}, {"sqr"s, 13}, {"sqrt"s, 14},
-                                                                                {"log"s, 15} };
-        }
+        static const std::unordered_map<std::string, std::size_t> arithmetic_operators{ {"+"s, 0}, {"-"s, 1}, {"*"s, 2},
+                                                                                        {"/"s, 3}, {"^"s, 4}, {"~"s, 5}, {"sin"s, 6},
+                                                                                        {"cos"s, 7}, {"tan"s, 8}, {"atan"s, 9}, {"exp"s, 10},
+                                                                                        {"abs"s, 11}, {"sign"s, 12}, {"sqr"s, 13}, {"sqrt"s, 14},
+                                                                                        {"log"s, 15} };
         return arithmetic_operators;
     }
 

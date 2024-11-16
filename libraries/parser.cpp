@@ -6,24 +6,19 @@ namespace parser {
 
 namespace {
     using namespace std::string_literals;
-    std::unordered_map<std::string, std::size_t> operator_priority{};
-    std::unordered_set<char> one_sym_operators{};
-
+    
     const std::unordered_map<std::string, std::size_t>& get_operator_priority() {
-        if (operator_priority.size() == 0) {
-            operator_priority = std::unordered_map<std::string, std::size_t>{{"("s, 0}, {"+"s, 1}, {"-"s, 1}, {"*"s, 2},
-                                                                             {"/"s, 2}, {"^"s, 3}, {"~"s, 4}, {"sin"s, 4}, 
-                                                                             {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
-                                                                             {"abs"s, 4}, {"sign"s, 4}, {"sqr"s, 4}, {"sqrt"s, 4},
-                                                                             {"log"s, 4} };
-        }
+        static const std::unordered_map<std::string, std::size_t> operator_priority{{"("s, 0}, {"+"s, 1}, {"-"s, 1}, {"*"s, 2},
+                                                                                    {"/"s, 2}, {"^"s, 3}, {"~"s, 4}, {"sin"s, 4}, 
+                                                                                    {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
+                                                                                    {"abs"s, 4}, {"sign"s, 4}, {"sqr"s, 4}, {"sqrt"s, 4},
+                                                                                    {"log"s, 4} };
+
         return operator_priority;
     }
 
     const std::unordered_set<char>& get_one_sym_operators() {
-        if (one_sym_operators.size() == 0) {
-            one_sym_operators = std::unordered_set<char>{'(', ')', '+', '-', '*', '/', '~', '^'};
-        }
+        static const std::unordered_set<char> one_sym_operators {'(', ')', '+', '-', '*', '/', '~', '^'};
         return one_sym_operators;
     }
     
