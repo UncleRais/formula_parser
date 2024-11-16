@@ -34,7 +34,7 @@ if (NOT DEFINED NO_CONAN)
     conan_basic_setup()
 endif()
 
-add_subdirectory(libraries/parser)
+add_subdirectory(libraries)
 
 add_subdirectory(src)
 

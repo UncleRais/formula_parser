@@ -7,5 +7,12 @@ if (NOT DEFINED NO_CONAN)
     set(INCLUDES ${CONAN_INCLUDE_DIRS_EIGEN})
 endif()
 
-add_library(parser_lib INTERFACE)
-target_include_directories(parser_lib INTERFACE "." ${INCLUDES})
+add_library(parser_lib STATIC 
+    parser.cpp
+    utils.cpp
+)
+
+target_include_directories(parser_lib PUBLIC 
+    "." 
+    ${INCLUDES}
+)

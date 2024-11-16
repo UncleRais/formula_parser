@@ -1,6 +1,7 @@
 #pragma once
 #include "utils.hpp"
-namespace ex {
+
+namespace parser::ex {
 // Grammatics for Domain specific language (DSL)
 // expression := constant | variable | expression +*/- expression | FUNCTION(expression) | (expression) | -expression 
 template<class E>

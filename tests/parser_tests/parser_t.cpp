@@ -7,7 +7,8 @@
 
 namespace {
 using namespace boost::ut;
-using namespace ex;
+using namespace parser;
+using namespace parser::ex;
 using namespace std::numbers;
 
 template <typename T, std::size_t TupSize, std::size_t M>

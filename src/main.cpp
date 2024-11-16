@@ -1,6 +1,7 @@
 #include "parser.hpp"
 
-using namespace ex;
+using namespace parser;
+using namespace parser::ex;
 int main(int argc, char** argv) {
 	std::array in{ 1 };
 	variable<0> x;

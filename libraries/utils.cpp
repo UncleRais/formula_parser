@@ -1,6 +1,8 @@
-#pragma once
+#include "utils.hpp"
 
-#include "utils_fwd.hpp"
+#include <stdexcept>
+
+namespace parser::utils {
 
 void error(const std::string& str) {
 	throw std::domain_error{str};
@@ -12,7 +14,7 @@ std::string& delete_all(std::string& str, char symb) {
 }
 
 std::size_t count_all(const std::string& s, char symb) {
-	return std::accumulate(s.begin(), s.end(), std::size_t(0), [](char a, char b){ return a == b ? 1 : 0; });
+	return std::accumulate(s.begin(), s.end(), std::size_t(0), [&](std::size_t res, char a){ return res + std::size_t(a == symb); });
 }
 
 bool is_latin_str(std::string s) {
@@ -33,11 +35,4 @@ bool is_number(std::string s) {
 	return true;
 };
 
-template<typename T>
-T get_number(const std::string& number) {
-	if constexpr (std::is_same_v<T, float>)       return std::stof(number);
-	if constexpr (std::is_same_v<T, double>)      return std::stod(number);
-	if constexpr (std::is_same_v<T, long double>) return std::stold(number);
-	if constexpr (std::is_same_v<T, int>)         return std::stoi(number);
-	if constexpr (std::is_same_v<T, std::size_t>) return std::stoul(number);
 }
