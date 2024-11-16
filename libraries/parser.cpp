@@ -93,7 +93,7 @@ std::unordered_map<std::string, std::size_t> MathParser::get_variables(std::stri
 	return res;
 }
 
-std::vector<std::pair<std::size_t, std::string>> MathParser::find_vars_and_ops(const std::string& infix_notation) {
+std::vector<std::pair<std::size_t, std::string>> MathParser::find_vars_and_ops(const std::string& infix_notation) const {
 	const auto operator_priority = get_operator_priority();
 	const auto one_sym_operator = get_one_sym_operators();
 	std::vector<std::pair<std::size_t, std::string>> var_op_indices;

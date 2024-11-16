@@ -147,7 +147,7 @@ private:
     }
 
     std::unordered_map<std::string, std::size_t> get_variables(std::string& pre_variables) const;
-    std::vector<std::pair<std::size_t, std::string>> find_vars_and_ops(const std::string& notation);
+    std::vector<std::pair<std::size_t, std::string>> find_vars_and_ops(const std::string& infix_notation) const;
     void assemble_polish_notation(const std::string& infix_notation, const std::vector<std::pair<std::size_t, std::string>>& var_op_indices);
 
     std::vector<std::string> _polish_notation{};
