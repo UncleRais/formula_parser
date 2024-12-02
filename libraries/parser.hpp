@@ -1,13 +1,12 @@
 #pragma once
 
+#include "utils.hpp"
+#include "expression.hpp"
+
 #include <unordered_map>
 #include <stack>
 #include <span>
 #include <stdexcept>
-
-#include "utils.hpp"
-#include "expression.hpp"
-#include <iostream>
 
 // pre_infix_notation -> |variables : expression|. Example: |x y z t : x * y * z - t / x + sin(x * y * z)|.
 // infix notation (standart) -> x + 5 * (y - z / t), polish notation (prefix) -> x 5 y z t / - * +
