@@ -66,6 +66,9 @@ const suite<"parser"> _ = [] {
         auto test = MathParser("x : -x");
         expect(test.get_polish_notation() == "x~" and test.get_n_vars() == 1);
 
+        test = MathParser("x:-x");
+        expect(test.get_polish_notation() == "x~" and test.get_n_vars() == 1);
+
         test = MathParser("x : x + x - x / x * x");
         expect(test.get_polish_notation() == "xx+xx/x*-" and test.get_n_vars() == 1);
 

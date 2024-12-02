@@ -1,11 +1,15 @@
 #include "utils.hpp"
 
+#include <numeric>
 #include <stdexcept>
 
 namespace parser::utils {
 
-void error(const std::string& str) {
-    throw std::domain_error{str};
+std::string trim(std::string str)
+{
+    str.erase(str.find_last_not_of(' ')+1);    //suffixing spaces
+    str.erase(0, str.find_first_not_of(' '));  //prefixing spaces
+    return str;
 }
 
 std::string& delete_all(std::string& str, char symb) {
@@ -19,19 +23,21 @@ std::size_t count_all(const std::string& s, char symb) {
 
 bool is_latin_str(const std::string& s) {
     if (s.size() == 0 || s.size() > 1)
-        error("Wrong format, latyn symbol contains of one symbol.");
+        throw std::domain_error{"Wrong format, latyn symbol contains of one symbol."};
     for (const char& d : s)
-        if (!std::isalpha(d)) return false;
+        if (!std::isalpha(d)) 
+            return false;
     return true;
 };
 
 bool is_number(const std::string& s) {
-    std::size_t dots = count_all(s, '.');
-    if (dots > 1)
+    if (const std::size_t dots = count_all(s, '.'); dots > 1)
         return false;
-    for (const char& d : s)
-        if (!std::isdigit(d) && d != '.') return false;
-    if (s.back() == '.') return false;
+    for (const char d : s)
+        if (d != '.' && !std::isdigit(d)) 
+            return false;
+    if (s.back() == '.') 
+        return false;
     return true;
 };
 

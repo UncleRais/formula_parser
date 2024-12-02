@@ -1,13 +1,15 @@
 #include "parser.hpp"
 
+#include <algorithm>
+#include <numeric>
 #include <unordered_set>
+#include <iostream>
 
 namespace parser {
 
 namespace {
-    using namespace std::string_literals;
-    
     const std::unordered_map<std::string, std::size_t>& get_operator_priority() {
+        using namespace std::string_literals;
         static const std::unordered_map<std::string, std::size_t> operator_priority{{"("s, 0}, {"+"s, 1}, {"-"s, 1}, {"*"s, 2},
                                                                                     {"/"s, 2}, {"^"s, 3}, {"~"s, 4}, {"sin"s, 4}, 
                                                                                     {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
@@ -23,19 +25,19 @@ namespace {
     }
     
     void parentheses_check(const std::string& infix_notation) {
-    std::size_t left_p = utils::count_all(infix_notation, '(');
-    std::size_t right_p = utils::count_all(infix_notation, ')');
+    const std::size_t left_p = utils::count_all(infix_notation, '(');
+    const std::size_t right_p = utils::count_all(infix_notation, ')');
     if (!(left_p == right_p))
-        utils::error("Wrong expression format. The expression contains open parentheses.");
+        throw std::domain_error{"Wrong expression format. The expression contains open parentheses."};
     }
 
     void dots_check(const std::string& infix_notation) {
-        char s = '.';
+        const char s = '.';
         if (infix_notation[0] == s || infix_notation[infix_notation.size() - 1] == s)
-            utils::error("Wrong expression format. The expression can not be started or finished with dot. Dots are only allowed in number representation.");
+            throw std::domain_error{"Wrong expression format. The expression can not be started or finished with dot. Dots are only allowed in number representation."};
         for (std::size_t position = infix_notation.find(s); position != -1; position = infix_notation.find(s, position + 1)) {
             if (!std::isdigit(infix_notation[position + 1]))
-                utils::error("Wrong expression format. The expression contains invalid dots. Dots are only allowed in number representation");
+                throw std::domain_error{"Wrong expression format. The expression contains invalid dots. Dots are only allowed in number representation"};
         }
     }
 
@@ -43,22 +45,21 @@ namespace {
         for (const std::string& var : variables) {
             const char& first_variable_symbol = var[0];
             if (!std::isalpha(first_variable_symbol))
-                utils::error("Wrong variables format <" + var + ">. Variables must start with latin letter, variable cannot start with a number.");
+                throw std::domain_error{"Wrong variables format <" + var + ">. Variables must start with latin letter, variable cannot start with a number."};
         }
     }
 
 }
 
 MathParser::MathParser(std::string pre_infix_notation) {
-    std::size_t delimiter = pre_infix_notation.find(':');
+    const std::size_t delimiter = pre_infix_notation.find(':');
     if (delimiter == -1)
-        utils::error("Wrong variables format. Symbol ':' is required after variables initialization.");
-    std::string pre_vars = pre_infix_notation.substr(0, delimiter);
-    _vars = get_variables(pre_vars);
+        throw std::domain_error{"Wrong variables format. Symbol ':' is required after variables initialization."};
+    _vars = get_variables(utils::trim(pre_infix_notation.substr(0, delimiter)));
     std::string infix_notation = pre_infix_notation.substr(delimiter, -1);
     infix_notation = utils::delete_all(utils::delete_all(infix_notation, ' '), ':');
     if (infix_notation.size() == 0)
-        utils::error("Wrong expression format. Formula after ':' is required.");
+        throw std::domain_error{"Wrong expression format. Formula after ':' is required."};
     parentheses_check(infix_notation);
     dots_check(infix_notation);
     const std::vector<std::pair<std::size_t, std::string>> var_op_indices = find_vars_and_ops(infix_notation);
@@ -78,13 +79,23 @@ std::unordered_map<std::string,std::size_t> MathParser::get_vars() const {
     return _vars;
 }
 
-std::unordered_map<std::string, std::size_t> MathParser::get_variables(std::string& pre_variables) const {
+const std::unordered_map<std::string, MathParser::op_idx>& MathParser::get_arithmetic_operators() {
+    using namespace std::string_literals;
+
+    static const std::unordered_map<std::string, op_idx>
+                 arithmetic_operators{  {"+"s,   op_idx::plus},   {"-"s,    op_idx::minus}, {"*"s,    op_idx::multiply},
+                                        {"/"s,   op_idx::divide}, {"^"s,    op_idx::power}, {"~"s,    op_idx::unary_minus}, {"sin"s,  op_idx::sin},
+                                        {"cos"s, op_idx::cos},    {"tan"s,  op_idx::tan},   {"atan"s, op_idx::atan},        {"exp"s,  op_idx::exp},
+                                        {"abs"s, op_idx::abs},    {"sign"s, op_idx::sign},  {"sqr"s,  op_idx::sqr},         {"sqrt"s, op_idx::sqrt},
+                                        {"log"s, op_idx::log} };
+    return arithmetic_operators;
+}
+
+std::unordered_map<std::string, std::size_t> MathParser::get_variables(std::string pre_variables) const {
     const char delimiter_symbol = ' ';
     std::vector<std::string> variables = {};
-    std::size_t delimiter = pre_variables.find(delimiter_symbol);
-    if (delimiter == -1)
-        utils::error("Wrong variables format. Variables must be separated by spaces.");
-    while (pre_variables.size() > 0) {
+    std::size_t delimiter = pre_variables.find(delimiter_symbol);        
+    while (delimiter != -1 || pre_variables.size() > 0) {
         variables.push_back(pre_variables.substr(0, delimiter));
         pre_variables = delimiter < pre_variables.size() ? pre_variables.substr(delimiter + 1, -1) : "";
         delimiter = pre_variables.find(delimiter_symbol);
@@ -123,8 +134,9 @@ std::vector<std::pair<std::size_t, std::string>> MathParser::find_vars_and_ops(c
         if (one_sym_operator.find(op[0]) == one_sym_operator.end())
             push_it(op);
 
-    std::sort(var_op_indices.begin(), var_op_indices.end(), [](std::pair<std::size_t, std::string>& left, std::pair<std::size_t, std::string>& right) {
-        return left.first < right.first;
+    std::sort(var_op_indices.begin(), var_op_indices.end(), 
+        [](std::pair<std::size_t, std::string>& left, std::pair<std::size_t, std::string>& right) {
+            return left.first < right.first;
         });
     if (var_op_indices.size() == 0) {
         var_op_indices.emplace_back(std::make_pair(-1, std::string{"not_a_variable"}));
@@ -153,7 +165,7 @@ void MathParser::assemble_polish_notation(const std::string& infix_notation, con
                 _polish_notation.push_back(smth);
             }
             else {
-                utils::error("Wrong variables and operators searching. Can not find contained string.");
+                throw std::domain_error{"Wrong variables and operators searching. Can not find contained string."};
             }
             i += smth.size() - 1;
             count++;

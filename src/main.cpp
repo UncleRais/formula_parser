@@ -1,5 +1,8 @@
 #include "parser.hpp"
 
+#include <iostream>
+#include <array>
+
 using namespace parser;
 using namespace parser::ex;
 int main(int argc, char** argv) {
