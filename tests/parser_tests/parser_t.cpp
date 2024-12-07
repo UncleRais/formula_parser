@@ -62,7 +62,7 @@ const suite<"parser"> _ = [] {
         expect(val < std::numeric_limits<double>::epsilon());
     };
 
-    "polish_notation"_test = [] {
+    "polish_notation_general"_test = [] {
         auto test = MathParser("x : -x");
         expect(test.to_polish() == "x~" and test.variables_count() == 1);
 
@@ -138,6 +138,55 @@ const suite<"parser"> _ = [] {
         expect(test.to_polish() == "xycos*texp/10+");
         expect(test.variables_count() == 3);
         expect(std::abs(test({ 2., pi, 10. }) - 9.99991) < 1e-6);
+    };
+
+    "polish_notation_throws"_test = [] {
+        using namespace std::string_literals;
+        static const std::unordered_map<std::string, std::size_t> operator_priority{{"("s, 0}, {"+"s, 1}, {"-"s, 1}, {"*"s, 2},
+                                                                                    {"/"s, 2}, {"^"s, 3}, {"~"s, 4}, {"sin"s, 4}, 
+                                                                                    {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
+                                                                                    {"abs"s, 4}, {"sign"s, 4}, {"sqr"s, 4}, {"sqrt"s, 4},
+                                                                                    {"log"s, 4} };
+        // Wrong variables format. Symbol ':' is required after variables initialization.
+        expect(throws([]() { auto test = MathParser("x y z x * y * z"s); }));
+
+        // Wrong variables format. Variables must start with latin letter, variable cannot start with a number
+        expect(throws([]() { auto test = MathParser("1x 2x 3x: 1x + 2x + 3x)"s); }));
+        expect(nothrow([]() { auto test = MathParser("x1 x2 x3: x1 + x2 + x3"s); }));
+
+        // Wrong expression format. Formula after ':' is required.
+        expect(throws([]() { auto test = MathParser("x y z: "s); }));
+
+        // Everything alright. Variables are not required if not used.
+        expect(nothrow([]() { auto test = MathParser(": 2 * 2"s); }));
+        expect(nothrow([]() { auto test = MathParser("x : 2 * 2"s); }));
+
+        // TODO : implement verification for this case, when variable in infix notation is not used 
+        auto test = MathParser("x : 2 * 2 * y"s);
+        expect(test.to_polish() == "22**");
+        // Must be throws
+        expect(nothrow([]() { auto test = MathParser("x : 2 * 2 * y"s); }));
+        // Euler gamma function is not already implemented. Must be throws
+        expect(nothrow([]() { auto test = MathParser("x y z: Г(x) * Г(y) * Г(z)"s); }));
+
+        // Invalid variable designation. Variable name <" + variable + "> is unavailable.
+        for (const auto& [op, _] : operator_priority) 
+            expect(throws([&op]() { auto test = MathParser(op + " : 2 * 2"s); }));
+        
+        // Wrong expression format. The expression contains open parentheses
+        expect(throws([]() { auto test = MathParser("x y z: exp(x*y*z"s); }));
+        expect(throws([]() { auto test = MathParser("x y z: exp x*y*z)"s); }));
+
+        // Wrong expression format. The expression can not be started or finished with dot. Dots are only allowed in number representation.
+        // TODO : 0. format
+        expect(throws([]() { auto test = MathParser("x y z: .5"s); }));
+        expect(throws([]() { auto test = MathParser("x y z: 0."s); }));
+        // must be nothrow
+        expect(throws([]() { auto test = MathParser("x y z: 0. * x / y"s); }));
+        expect(nothrow([]() { auto test = MathParser("x y z: 0.5"s); }));
+        expect(nothrow([]() { auto test = MathParser("x y z: 0.0"s); }));
+        expect(nothrow([]() { auto test = MathParser("x y z: x* .5 / y"s); }));
+
     };
 
 };

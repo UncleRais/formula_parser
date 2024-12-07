@@ -21,6 +21,14 @@ namespace {
         static const std::unordered_set<char> one_sym_operators {'(', ')', '+', '-', '*', '/', '~', '^'};
         return one_sym_operators;
     }
+
+    void check_variables_admissibility(const std::unordered_map<std::string, std::size_t>& variables) {
+        const auto& operator_priority = get_operator_priority();
+        for (const auto& [variable, _] : variables) 
+            if (operator_priority.contains(variable))
+                throw std::domain_error{"Invalid variable designation. Variable name <" + variable + "> \
+                                         is unavailable."};   
+    }
     
     void parentheses_check(const std::string& infix_notation) {
         if (parser::utils::count_all(infix_notation, '(') != parser::utils::count_all(infix_notation, ')'))
@@ -70,6 +78,7 @@ MathParser::MathParser(std::string pre_infix_notation) {
     if (delimiter == std::string::npos)
         throw std::domain_error{"Wrong variables format. Symbol ':' is required after variables initialization."};
     _variables = ::get_variables(utils::trim(pre_infix_notation.substr(0, delimiter)));
+    check_variables_admissibility(_variables);
     std::string infix_notation = pre_infix_notation.substr(delimiter + 1);
     infix_notation = utils::delete_all(infix_notation, ' ');
     if (infix_notation.empty())
