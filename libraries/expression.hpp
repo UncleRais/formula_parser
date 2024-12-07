@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <vector>
+#include <array>
 
 namespace parser::ex {
 // Grammatics for Domain specific language (DSL)

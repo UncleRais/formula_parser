@@ -16,9 +16,9 @@ class MathParser {
 public:
     explicit MathParser(std::string pre_infix_notation);
 
-    std::string get_polish_notation() const;
-    std::size_t get_n_vars() const;
-    std::unordered_map<std::string, std::size_t> get_vars() const;
+    std::string to_polish() const;
+    std::size_t variables_count() const;
+    std::unordered_map<std::string, std::size_t> get_variables() const;
 
     template <utils::arithmetic T>
     T operator()(const std::span<const T> input_vars) const {
@@ -31,69 +31,59 @@ public:
     }
 
 private:
-    enum class op_idx : std::size_t {
-        plus = 0, 
-        minus = 1,
-        multiply = 2,
-        divide = 3,
-        power = 4,
-        unary_minus = 5,
-        sin = 6,
-        cos = 7, 
-        tan = 8,
-        atan = 9,
-        exp = 10,
-        abs = 11,
-        sign = 12,
-        sqr = 13,
-        sqrt = 14,
-        log = 15
+    enum class operator_index : std::size_t {
+        plus, minus, unary_minus,
+        multiply, divide, power, sqr, sqrt,
+        sin, cos, tan, atan,
+        exp, log,
+        abs, sign
     };
 
     template<utils::arithmetic T>
-    T execute(const std::unordered_map<std::string, MathParser::op_idx>& ops, std::stack<T>& num_and_var, const std::string& op) const {
-        auto pop_element = [&num_and_var]() {
+    T execute(const std::unordered_map<std::string, MathParser::operator_index>& ops, 
+              std::stack<T>& calculation_values, const std::string& op) const {
+        const auto pop_element = [&calculation_values]() {
             T elem = T(0);
-            if (!num_and_var.empty()) {
-                elem = num_and_var.top();
-                num_and_var.pop();
+            if (!calculation_values.empty()) {
+                elem = calculation_values.top();
+                calculation_values.pop();
             }
             return elem;
         };
         const T right = pop_element();
         switch(ops.at(op))
         {
-        case op_idx::plus:
+        case operator_index::plus:
             return pop_element() + right;
-        case op_idx::minus:
+        case operator_index::minus:
             return pop_element() - right;
-        case op_idx::multiply:
+        case operator_index::multiply:
             return pop_element() * right;
-        case op_idx::divide:
+        case operator_index::divide:
             return pop_element() / right;
-        case op_idx::power:
+        case operator_index::power:
             return std::pow(pop_element(), right);
-        case op_idx::unary_minus:
+        case operator_index::unary_minus:
             return -right;
-        case op_idx::sin:
+        case operator_index::sin:
             return std::sin(right);
-        case op_idx::cos:
+        case operator_index::cos:
             return std::cos(right);
-        case op_idx::tan:
+        case operator_index::tan:
             return std::tan(right);
-        case op_idx::atan:
+        case operator_index::atan:
             return std::atan(right);
-        case op_idx::exp:
+        case operator_index::exp:
             return std::exp(right);
-        case op_idx::abs:
+        case operator_index::abs:
             return std::abs(right);
-        case op_idx::sign:
+        case operator_index::sign:
             return (right > 0) - (right < 0);
-        case op_idx::sqr:
+        case operator_index::sqr:
             return right * right;
-        case op_idx::sqrt:
+        case operator_index::sqrt:
             return std::sqrt(right);
-        case op_idx::log:
+        case operator_index::log:
             return std::log(right);
         default:
             throw std::domain_error{"Error. Undefined operator <" + op + ">/."};
@@ -101,32 +91,31 @@ private:
     }
 
     template <utils::arithmetic T>
-    T calc_polish_notation(const std::span<const T> input_vars) const {
-        if (input_vars.size() != _vars.size()) [[unlikely]]
+    T calc_polish_notation(const std::span<const T> input_variables) const {
+        if (input_variables.size() != _variables.size()) [[unlikely]]
             throw std::domain_error{"Wrong number of variables."};
         const auto& arithmetic_operators = get_arithmetic_operators();
-        std::stack<T> num_and_var;
+        std::stack<T> calculation_values;
         for (const std::string& smth : _polish_notation) {
             if (utils::is_number(smth)) {
-                num_and_var.push(utils::get_number<T>(smth));
+                calculation_values.push(utils::get_number<T>(smth));
             }
-            else if (_vars.count(smth) > 0) {
-                num_and_var.push(input_vars[_vars.at(smth)]);
+            else if (_variables.count(smth) > 0) {
+                calculation_values.push(input_variables[_variables.at(smth)]);
             }
             else if (arithmetic_operators.count(smth) > 0) {
-                num_and_var.push(execute<T>(arithmetic_operators, num_and_var, smth));
+                calculation_values.push(execute<T>(arithmetic_operators, calculation_values, smth));
             }
         }
-        return num_and_var.top();
+        return calculation_values.top();
     }
 
-    static const std::unordered_map<std::string, op_idx>& get_arithmetic_operators();
-    std::unordered_map<std::string, std::size_t> get_variables(std::string pre_variables) const;
-    std::vector<std::pair<std::size_t, std::string>> find_vars_and_ops(const std::string& infix_notation) const;
-    void assemble_polish_notation(const std::string& infix_notation, const std::vector<std::pair<std::size_t, std::string>>& var_op_indices);
+    static const std::unordered_map<std::string, operator_index>& get_arithmetic_operators();
+    std::unordered_map<std::size_t, std::string> find_variables_and_operators(const std::string& infix_notation) const;
+    void assemble_polish_notation(const std::string& infix_notation);
 
     std::vector<std::string> _polish_notation{};
-    std::unordered_map<std::string, std::size_t> _vars;
+    std::unordered_map<std::string, std::size_t> _variables;
 };
 
 };

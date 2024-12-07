@@ -16,17 +16,24 @@ bool is_latin_str(const std::string& s);
 bool is_number(const std::string& s);
 
 template<arithmetic T>
-T get_number(const std::string& number) {
+T get_number(const std::string& number, std::size_t* idx = 0, int base = 10) {
     if constexpr (std::is_same_v<T, float>)       
-        return std::stof(number);
+        return std::stof(number, idx);
     if constexpr (std::is_same_v<T, double>)      
-        return std::stod(number);
+        return std::stod(number, idx);
     if constexpr (std::is_same_v<T, long double>) 
-        return std::stold(number);
+        return std::stold(number, idx);
     if constexpr (std::is_same_v<T, int>)         
-        return std::stoi(number);
-    if constexpr (std::is_same_v<T, std::size_t>) 
-        return std::stoul(number);
+        return std::stoi(number, idx, base);
+    if constexpr (std::is_same_v<T, long>)         
+        return std::stol(number, idx, base);
+    if constexpr (std::is_same_v<T, long long>)         
+        return std::stoll(number, idx, base);
+    if constexpr (std::is_same_v<T, unsigned long>) 
+        return std::stoul(number, idx, base);
+    if constexpr (std::is_same_v<T, unsigned long long>) 
+        return std::stoull(number, idx, base);
+    return std::stoi(number, idx, base); // bool, char 
 }
 
 }
