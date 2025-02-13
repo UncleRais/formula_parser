@@ -235,8 +235,13 @@ const suite<"parser"> _ = [] {
         static const std::unordered_map<std::string, std::size_t> operator_priority{{"("s, 0}, {"+"s, 1}, {"-"s, 1}, {"*"s, 2},
                                                                                     {"/"s, 2}, {"^"s, 3}, {"~"s, 4}, {"sin"s, 4}, 
                                                                                     {"cos"s, 4}, {"tan"s, 4}, {"atan"s, 4}, {"exp"s, 4},
-                                                                                    {"abs"s, 4}, {"sign"s, 4}, {"sqr"s, 4}, {"sqrt"s, 4},
-                                                                                    {"log"s, 4} };
+                                                                                    {"abs"s, 4}, {"sign"s, 4}, {"sqr"s, 4},  {"sqrt"s, 4},
+                                                                                    {"log"s, 4}, {"tgamma"s, 4}, {"exp2"s, 4}, {"expm1"s, 4},
+                                                                                    {"log10"s, 4}, {"log2"s, 4}, {"log1p"s, 4}, {"cbrt"s, 4},
+                                                                                    {"asin"s, 4}, {"acos"s, 4}, {"sinh"s, 4}, {"cosh"s, 4},
+                                                                                    {"tanh"s, 4}, {"asinh"s, 4}, {"acosh"s, 4}, {"atanh"s, 4},
+                                                                                    {"erf"s, 4}, {"erfc"s, 4}, {"lgamma"s, 4}, {"ceil"s, 4},
+                                                                                    {"floor"s, 4}, {"round"s, 4}, {"trunc"s, 4}};
         // Wrong variables format. Symbol ':' is required after variables initialization.
         expect(throws([]() { auto test = MathParser("x y z x * y * z"s); }));
 
@@ -256,7 +261,7 @@ const suite<"parser"> _ = [] {
         expect(test.to_polish() == "22**");
         // Must be throws
         expect(nothrow([]() { auto test = MathParser("x : 2 * 2 * y"s); }));
-        // Euler gamma function is not already implemented. Must be throws
+        // Must be throws, no functionality related with symbol "Г"
         expect(nothrow([]() { auto test = MathParser("x y z: Г(x) * Г(y) * Г(z)"s); }));
 
         // Invalid variable designation. Variable name <" + variable + "> is unavailable.
