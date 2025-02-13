@@ -33,10 +33,11 @@ public:
 private:
     enum class operator_index : std::size_t {
         plus, minus, unary_minus,
-        multiply, divide, power, sqr, sqrt,
-        sin, cos, tan, atan,
-        exp, log,
-        abs, sign
+        multiply, divide, power, sqr, sqrt, cbrt,
+        sin, asin, sinh, asinh, cos, acos, cosh, acosh, tan, atan, tanh, atanh,
+        exp, exp2, expm1, log, log10, log2, log1p,
+        abs, sign, ceil, floor, trunc, round,
+        tgamma, lgamma, erf, erfc
     };
 
     template<utils::arithmetic T>
@@ -85,6 +86,50 @@ private:
             return std::sqrt(right);
         case operator_index::log:
             return std::log(right);
+        case operator_index::tgamma:
+            return std::tgamma(right);
+        case operator_index::lgamma:
+            return std::lgamma(right);
+        case operator_index::exp2:
+            return std::exp2(right);
+        case operator_index::expm1:
+            return std::expm1(right);
+        case operator_index::log10:
+            return std::log10(right);
+        case operator_index::log2:
+            return std::log2(right);
+        case operator_index::log1p:
+            return std::log1p(right);
+        case operator_index::cbrt:
+            return std::cbrt(right);
+        case operator_index::asin:
+            return std::asin(right);
+        case operator_index::acos:
+            return std::acos(right);
+        case operator_index::sinh:
+            return std::sinh(right);
+        case operator_index::cosh:
+            return std::cosh(right);
+        case operator_index::tanh:
+            return std::tanh(right);
+        case operator_index::asinh:
+            return std::asinh(right);
+        case operator_index::acosh:
+            return std::acosh(right);
+        case operator_index::atanh:
+            return std::atanh(right);
+        case operator_index::erf:
+            return std::erf(right);
+        case operator_index::erfc:
+            return std::erfc(right);
+        case operator_index::ceil:
+            return std::ceil(right);
+        case operator_index::floor:
+            return std::floor(right);
+        case operator_index::trunc:
+            return std::trunc(right);
+        case operator_index::round:
+            return std::round(right);
         default:
             throw std::domain_error{"Error. Undefined operator <" + op + ">/."};
         }

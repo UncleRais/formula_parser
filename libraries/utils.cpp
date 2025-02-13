@@ -24,7 +24,7 @@ std::size_t count_all(const std::string& s, char symb) {
 bool is_latin_str(const std::string& s) {
     if (s.size() == 0 || s.size() > 1)
         throw std::domain_error{"Wrong format, latyn symbol contains of one symbol."};
-    for (const char& d : s)
+    for (const char d : s)
         if (!std::isalpha(d)) 
             return false;
     return true;
@@ -36,8 +36,6 @@ bool is_number(const std::string& s) {
     for (const char d : s)
         if (d != '.' && !std::isdigit(d)) 
             return false;
-    if (s.back() == '.') 
-        return false;
     return true;
 };
 

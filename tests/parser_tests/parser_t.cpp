@@ -108,6 +108,96 @@ const suite<"parser"> _ = [] {
         expect(test.to_polish() == "xlog" and test.variables_count() == 1);
         expect(lt(std::abs(test({ e }) - 1), std::numeric_limits<double>::epsilon()));
 
+        // remark: Euler Gamma function
+        // for each natural number i = 1, 2, 3, ... tgamma(i) = (i - 1)! 
+        test = MathParser("x : tgamma(x)");
+        expect(test.to_polish() == "xtgamma" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 6. }) - 120.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : lgamma(x)");
+        expect(test.to_polish() == "xlgamma" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 124.23 }) - std::lgamma(124.23)), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : exp2(x)");
+        expect(test.to_polish() == "xexp2" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 4. }) - 16.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : expm1(x)");
+        expect(test.to_polish() == "xexpm1" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 0. }) - 0.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : log10(x)");
+        expect(test.to_polish() == "xlog10" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 100. }) - 2.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : log2(x)");
+        expect(test.to_polish() == "xlog2" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 4. }) - 2.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : log1p(x)");
+        expect(test.to_polish() == "xlog1p" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ e - 1. }) - 1.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : cbrt(x)");
+        expect(test.to_polish() == "xcbrt" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 27 }) - 3), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : asin(x)");
+        expect(test.to_polish() == "xasin" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 1. }) - pi / 2.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : acos(x)");
+        expect(test.to_polish() == "xacos" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 0. }) - pi / 2.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : sinh(x)");
+        expect(test.to_polish() == "xsinh" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 0. }) - 0.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : cosh(x)");
+        expect(test.to_polish() == "xcosh" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 0. }) - 1.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : tanh(x)");
+        expect(test.to_polish() == "xtanh" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 0. }) - 0.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : asinh(x)");
+        expect(test.to_polish() == "xasinh" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 0. }) - 0.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : acosh(x)");
+        expect(test.to_polish() == "xacosh" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 1. }) - 0.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : atanh(x)");
+        expect(test.to_polish() == "xatanh" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 0. }) - 0.), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : erf(x)");
+        expect(test.to_polish() == "xerf" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 124.23 }) - std::erf(124.23)), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : erfc(x)");
+        expect(test.to_polish() == "xerfc" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 124.23 }) - std::erfc(124.23)), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : trunc(x)");
+        expect(test.to_polish() == "xtrunc" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 124.23 }) - std::trunc(124.23)), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : floor(x)");
+        expect(test.to_polish() == "xfloor" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 124.23 }) - std::floor(124.23)), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : ceil(x)");
+        expect(test.to_polish() == "xceil" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 124.23 }) - std::ceil(124.23)), std::numeric_limits<double>::epsilon()));
+
+        test = MathParser("x : round(x)");
+        expect(test.to_polish() == "xround" and test.variables_count() == 1);
+        expect(lt(std::abs(test({ 124.23 }) - std::round(124.23)), std::numeric_limits<double>::epsilon()));
+
         test = MathParser("x : x^(0.3415234)");
         expect(test.to_polish() == "x0.3415234^" and test.variables_count() == 1);
         expect(lt(std::abs(test({ e }) - std::pow(e, 0.3415234)), std::numeric_limits<double>::epsilon()));
